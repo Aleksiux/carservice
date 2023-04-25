@@ -19,31 +19,31 @@ class CarModel(models.Model):
         ordering = ['brand']
 
     def __str__(self):
-        return f"{self.brand} - {self.car_model} | {self.year} - {self.engine}"
+        return f"{self.brand} {self.car_model} {self.year} {self.engine}"
 
 
 class Car(models.Model):
     car_id = models.AutoField(primary_key=True)
     licence_plate = models.CharField('Licence plate', max_length=50)
-    car_model_id = models.ForeignKey(CarModel, on_delete=models.DO_NOTHING)
-    vin_code = models.CharField('VIN code', max_length=24)
+    car_model = models.ForeignKey(CarModel, null=True, on_delete=models.SET_NULL)
+    vin_code = models.CharField('VIN code', max_length=17)
     client = models.CharField('Client', max_length=100, help_text='Enter client:')
 
     def __str__(self):
-        return f"{self.licence_plate}|{self.car_model_id}|{self.vin_code}|{self.client}"
+        return f"{self.licence_plate} {self.car_model} {self.vin_code} {self.client}"
 
 
 class Order(models.Model):
     order_id = models.AutoField(primary_key=True)
     date = models.DateField('Date', default=datetime.now().date())
-    car_id = models.ForeignKey(Car, on_delete=models.DO_NOTHING)
+    car = models.ForeignKey(Car, null=True, on_delete=models.SET_NULL)
     amount = models.IntegerField('Amount')
 
     class Meta:
         ordering = ['date']
 
     def __str__(self):
-        return f"{self.date}|{self.amount}"
+        return f"{self.date} {self.amount}"
 
 
 class Service(models.Model):
@@ -56,18 +56,26 @@ class Service(models.Model):
         ordering = ['name']
 
     def __str__(self):
-        return f"{self.name}, {self.price}"
+        return f"{self.name}"
 
 
-class OrderRow(models.Model):
-    order_row_id = models.AutoField(primary_key=True)
-    order_id = models.ForeignKey(Order, on_delete=models.DO_NOTHING)
-    service_id = models.ForeignKey(Service, on_delete=models.DO_NOTHING)
+class ServicePrice(models.Model):
+    service_price_id = models.AutoField(primary_key=True)
+    service = models.ForeignKey(Service, null=True, on_delete=models.SET_NULL)
+    cars = models.ManyToManyField(CarModel)
     quantity = models.IntegerField('Quantity')
     price = models.IntegerField('Price')
 
     class Meta:
-        ordering = ['order_id']
+        ordering = ['service_price_id']
 
     def __str__(self):
-        return f"{self.quantity}|{self.price}"
+        return f"{self.service} {self.price}"
+
+
+class OrderList(models.Model):
+    order_list_id = models.AutoField(primary_key=True)
+    order = models.ForeignKey(Order, null=True, on_delete=models.SET_NULL)
+    service = models.ForeignKey(Service, null=True, on_delete=models.SET_NULL)
+    quantity = models.IntegerField('Quantity')
+    price = models.FloatField('Price')
