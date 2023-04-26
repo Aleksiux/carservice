@@ -2,7 +2,7 @@ from django.db import models
 
 # Create your models here.
 from django.db import models
-from datetime import datetime
+from django.utils import timezone
 
 
 # Create your models here.
@@ -16,6 +16,8 @@ class CarModel(models.Model):
     engine = models.CharField('Car engine', max_length=20)
 
     class Meta:
+        verbose_name = 'Car model'
+        verbose_name_plural = 'Car models'
         ordering = ['brand']
 
     def __str__(self):
@@ -32,18 +34,11 @@ class Car(models.Model):
     def __str__(self):
         return f"{self.licence_plate} {self.car_model} {self.vin_code} {self.client}"
 
-
-class Order(models.Model):
-    order_id = models.AutoField(primary_key=True)
-    date = models.DateField('Date', default=datetime.now().date())
-    car = models.ForeignKey(Car, null=True, on_delete=models.SET_NULL)
-    amount = models.IntegerField('Amount')
-
     class Meta:
-        ordering = ['date']
+        verbose_name = 'Car'
+        verbose_name_plural = 'Cars'
 
-    def __str__(self):
-        return f"{self.date} {self.amount}"
+
 
 
 class Service(models.Model):
@@ -53,29 +48,49 @@ class Service(models.Model):
     price = models.IntegerField('Service price ', help_text='Enter service price:')
 
     class Meta:
+        verbose_name = 'Service'
+        verbose_name_plural = 'Services'
         ordering = ['name']
 
     def __str__(self):
         return f"{self.name}"
 
 
+
 class ServicePrice(models.Model):
     service_price_id = models.AutoField(primary_key=True)
     service = models.ForeignKey(Service, null=True, on_delete=models.SET_NULL)
     cars = models.ManyToManyField(CarModel)
-    quantity = models.IntegerField('Quantity')
     price = models.IntegerField('Price')
 
     class Meta:
+        verbose_name = 'Service price'
+        verbose_name_plural = 'Service prices'
         ordering = ['service_price_id']
 
     def __str__(self):
         return f"{self.service} {self.price}"
 
 
-class OrderList(models.Model):
-    order_list_id = models.AutoField(primary_key=True)
-    order = models.ForeignKey(Order, null=True, on_delete=models.SET_NULL)
+class Order(models.Model):
+    order_id = models.AutoField(primary_key=True)
+    date = models.DateTimeField('Date', default=timezone.now)
+    car = models.ForeignKey(Car, null=True, on_delete=models.SET_NULL)
     service = models.ForeignKey(Service, null=True, on_delete=models.SET_NULL)
     quantity = models.IntegerField('Quantity')
-    price = models.FloatField('Price')
+    total_price = models.IntegerField('Total Amount')
+
+    class Meta:
+        verbose_name = 'Order'
+        verbose_name_plural = 'Orders'
+        ordering = ['date']
+
+    def __str__(self):
+        return f"{self.date} {self.total_price}"
+
+# class OrderInstance(models.Model):
+#     order_instance_id = models.AutoField(primary_key=True)
+#     order = models.ForeignKey(Order, null=True, on_delete=models.SET_NULL)
+#     service = models.ForeignKey(Service, null=True, on_delete=models.SET_NULL)
+#     quantity = models.IntegerField('Quantity')
+#     price = models.FloatField('Price')
