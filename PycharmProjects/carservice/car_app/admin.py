@@ -5,13 +5,14 @@ from .models import *
 # Register your models here.
 
 
-# class OrderRowAdmin(admin.ModelAdmin):
-#     list_display = ('display_service', 'quantity', 'price')
-
+class CarAdmin(admin.ModelAdmin):
+    list_display = ('client', 'licence_plate', 'car_model', 'vin_code')
+    list_filter = ('client', 'car_model')
+    search_fields = ('licence_plate', 'vin_code', 'client')
 
 
 admin.site.register(CarModel)
-admin.site.register(Car)
+admin.site.register(Car, CarAdmin)
 admin.site.register(Order)
 admin.site.register(Service)
-admin.site.register(ServicePrice) #OrderRowAdmin
+admin.site.register(ServicePrice)  # OrderRowAdmin
