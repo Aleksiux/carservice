@@ -39,8 +39,6 @@ class Car(models.Model):
         verbose_name_plural = 'Cars'
 
 
-
-
 class Service(models.Model):
     """Service table"""
     service_id = models.AutoField(primary_key=True)
@@ -54,7 +52,6 @@ class Service(models.Model):
 
     def __str__(self):
         return f"{self.name}"
-
 
 
 class ServicePrice(models.Model):
@@ -72,25 +69,33 @@ class ServicePrice(models.Model):
         return f"{self.service} {self.price}"
 
 
-class Order(models.Model):
-    order_id = models.AutoField(primary_key=True)
-    date = models.DateTimeField('Date', default=timezone.now)
+class OrderList(models.Model):
+    """Order list which is connected to an order. Representing the visit to the car service
+    and the total order placed """
+    order_list_id = models.AutoField(primary_key=True)
+    order_date = models.DateTimeField('Date', default=timezone.now)
     car = models.ForeignKey(Car, null=True, on_delete=models.SET_NULL)
+    total_price = models.FloatField('Total Amount')
+
+    class Meta:
+        verbose_name = 'Order List'
+        verbose_name_plural = 'Order Lists'
+
+    def __str__(self):
+        return f"{self.car} - {self.order_date} - {self.total_price}"
+
+
+class Order(models.Model):
+    """Order which is connected to an order list. Representing one service/thing bought."""
+    order_id = models.AutoField(primary_key=True)
+    order_list_id = models.ForeignKey(OrderList, on_delete=models.SET_NULL, null=True)
     service = models.ForeignKey(Service, null=True, on_delete=models.SET_NULL)
     quantity = models.IntegerField('Quantity')
-    total_price = models.IntegerField('Total Amount')
+    price = models.FloatField('Price')
 
     class Meta:
         verbose_name = 'Order'
         verbose_name_plural = 'Orders'
-        ordering = ['date']
 
     def __str__(self):
-        return f"{self.date} {self.total_price}"
-
-# class OrderInstance(models.Model):
-#     order_instance_id = models.AutoField(primary_key=True)
-#     order = models.ForeignKey(Order, null=True, on_delete=models.SET_NULL)
-#     service = models.ForeignKey(Service, null=True, on_delete=models.SET_NULL)
-#     quantity = models.IntegerField('Quantity')
-#     price = models.FloatField('Price')
+        return f"{self.quantity} - {self.price}"
