@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% for car in cars %}
+    <li>{{car.licence_plate}}</li>
+    <li>{{car.car_model}}</li>
+    <a href="{% url 'car' car.car_id %}"> More about</a>
+    <hr>
+{% endfor %}
+
+{% endblock %}
