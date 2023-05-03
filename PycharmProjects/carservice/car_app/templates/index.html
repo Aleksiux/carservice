@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<p>Car brands: {% for car in cars%} {{car.brand}}, {% endfor %}</p>
+<p>Cars in service: {{car_count}}</p>
+<p>Orders in service: {{orders_count}}</p>
+{% for service in services%}
+<p>Service name: {{service}}</p>
+{% endfor %}
+<p>Services: {{services_count}}</p>
+
+
+{% endblock %}
