@@ -2,11 +2,64 @@
 
 {% block content %}
 
-{% for car in cars %}
-    <li>{{car.licence_plate}}</li>
-    <li>{{car.car_model}}</li>
-    <a href="{% url 'car' car.car_id %}"> More about</a>
-    <hr>
-{% endfor %}
+
+
+ {% load static %}
+
+  <h1>Car list</h1>
+  {% if cars %}
+      <div class="row">
+    {% for car in cars %}
+       <div class="col-md-2 d-flex">
+          <div class="card mb-2 shadow-sm">
+            {% if car.car_model.car_photo %}
+              <img src="{{ car.car_model.car_photo.url }}">
+            {% else %}
+              <img src="{% static 'media/car_photo/no-image.jpg' %}" class="card-img-top car-cover">
+            {% endif %}
+              <div class="card-body">
+                  <h6 class="card-subtitle mb-2 text-muted">{{ car.client }}</h6>
+              <p class="card-text"><a href="{% url 'car' car.car_id %}">{{ car.licence_plate }}</a></p>
+          </div>
+       </div>
+      </div>
+      </div>
+    {% endfor %}
+  {% else %}
+    <p>In service there is no cars</p>
+  {% endif %}
+
+
+
+
+<!--{% for car in cars %}-->
+<!--    <li>{{car.licence_plate}}</li>-->
+<!--    <li>{{car.car_model}}</li>-->
+<!--    <a href="{% url 'car' car.car_id %}"> More about</a>-->
+<!--    <hr>-->
+<!--{% endfor %}-->
+
+
+
+<div class="container pages">
+    <nav aria-label="...">
+        {% if cars.has_other_pages %}
+            <ul class="pagination pagination-sm">
+                {% for i in cars.paginator.page_range %}
+                    {% if orders.number == i %}
+                        <li class="page-item active">
+                            <a class="page-link">{{ i }}</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ i }}">{{ i }}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </nav>
+</div>
+
 
 {% endblock %}

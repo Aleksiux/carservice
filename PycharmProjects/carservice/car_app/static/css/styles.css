@@ -1,0 +1,14 @@
+.sidebar-nav {
+    margin-top: 100px;
+    padding:0;
+    list-style: none;
+
+}
+
+
+.car-cover {
+    width: 100px;
+    height: 100px;
+    object-fit: contain;
+
+}

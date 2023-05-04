@@ -2,12 +2,12 @@
 
 {% block content %}
 
+<h2>All orders for {{order_list.car.client}} </h2>
 
-<h2>All orders for </h2>
-{% for order in order_list %}
-    <p>{{order.service}}</p>
-    <p>{{order.quantity}}</p>
-    <p>{{order.price}}</p>
+{% for order in order_list_orders %}
+    <p>Order service - {{order.service}}</p>
+    <p>Order quantity - {{order.quantity}}</p>
+    <p>Order full price - {{order.price}}</p>
     <hr>
 
 

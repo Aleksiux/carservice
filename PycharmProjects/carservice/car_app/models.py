@@ -3,6 +3,8 @@ from django.db import models
 # Create your models here.
 from django.db import models
 from django.utils import timezone
+from django_resized import ResizedImageField
+from  PIL import *
 
 
 # Create your models here.
@@ -14,6 +16,8 @@ class CarModel(models.Model):
     car_model = models.CharField('Car model', max_length=50)
     year = models.DateField('Car year')
     engine = models.CharField('Car engine', max_length=20)
+    car_photo = ResizedImageField('Car photo', size=[375, 500], upload_to='car_photo', null=True)
+
 
     class Meta:
         verbose_name = 'Car model'
@@ -30,6 +34,7 @@ class Car(models.Model):
     car_model = models.ForeignKey(CarModel, null=True, on_delete=models.SET_NULL)
     vin_code = models.CharField('VIN code', max_length=17)
     client = models.CharField('Client', max_length=100, help_text='Enter client:')
+
 
     def __str__(self):
         return f"{self.licence_plate} {self.car_model} {self.vin_code} {self.client}"
