@@ -50,8 +50,11 @@ def orders(request):
 
 
 def order(request, order_list_id):
-    order_list = Order.objects.filter(order_list_id__exact=order_list_id)
+    order_list_orders = Order.objects.filter(order_list_id__exact=order_list_id)
+    order_list = get_object_or_404(OrderList, pk=order_list_id)
+    print(order_list)
     context = {
+        'order_list_orders':order_list_orders,
         'order_list': order_list
     }
     return render(request, 'order.html', context)

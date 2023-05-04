@@ -1,6 +1,12 @@
 {% extends 'base.html' %}
 
 {% block content %}
+ {% load static %}
+    {% if car.car_model.car_photo %}
+    <img src="{{ car.car_photo.url }}" style="margin-bottom: 20px;" class="car-photo">
+    {% else %}
+    <img src="{% static 'media/car_photo/no-image.jpg' %}" style="margin-bottom: 20px;" class="car-photo">
+    {% endif %}
     <li>{{car.licence_plate}}</li>
     <li>{{car.car_model}}</li>
     <li>{{car.vin_code}}</li>
