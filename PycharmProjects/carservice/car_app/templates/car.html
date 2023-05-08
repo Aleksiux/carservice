@@ -3,7 +3,7 @@
 {% block content %}
  {% load static %}
     {% if car.car_model.car_photo %}
-    <img src="{{ car.car_photo.url }}" style="margin-bottom: 20px;" class="car-photo">
+    <img src="{{ car.car_model.car_photo.url }}" style="margin-top: 50px;" class="car-photo">
     {% else %}
     <img src="{% static 'media/car_photo/no-image.jpg' %}" style="margin-bottom: 20px;" class="car-photo">
     {% endif %}

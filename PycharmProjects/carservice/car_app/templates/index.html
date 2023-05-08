@@ -2,13 +2,19 @@
 
 {% block content %}
 
+
+{% if user.is_authenticated %}
+<p> Welcome back {{user.username}}</p>
+{% else %}
+<p> Welcome to car service</p>
+{% endif %}
 <p>Car brands: {% for car in cars%} {{car.brand}}, {% endfor %}</p>
 <p>Cars in service: {{car_count}}</p>
 <p>Orders in service: {{orders_count}}</p>
-{% for service in services%}
+{% for service in services %}
 <p>Service name: {{service}}</p>
 {% endfor %}
 <p>Services: {{services_count}}</p>
 
-
+<p>You have visited this site {{number_of_visits}} times!</p>
 {% endblock %}

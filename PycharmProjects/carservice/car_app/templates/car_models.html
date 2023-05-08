@@ -8,23 +8,27 @@
 
   <h1>Car list</h1>
   {% if cars %}
-      <div class="row">
+<div class="row">
+<div class="card-group">
     {% for car in cars %}
-       <div class="col-md-2 d-flex">
-          <div class="card mb-2 shadow-sm">
+    <a href="{% url 'car' car.car_id %}">
+       <div class="col-md-4">
+          <div class="card mb-4" style="width: 18rem;">
             {% if car.car_model.car_photo %}
-              <img src="{{ car.car_model.car_photo.url }}">
+              <img src="{{ car.car_model.car_photo.url }}" class="card-img-top car-cover box">
             {% else %}
-              <img src="{% static 'media/car_photo/no-image.jpg' %}" class="card-img-top car-cover">
+              <img src="{% static 'media/car_photo/no-image.jpg' %}" class="card-img-top car-cover box">
             {% endif %}
               <div class="card-body">
                   <h6 class="card-subtitle mb-2 text-muted">{{ car.client }}</h6>
-              <p class="card-text"><a href="{% url 'car' car.car_id %}">{{ car.licence_plate }}</a></p>
+              <p class="card-text">{{ car.licence_plate }}</p>
           </div>
        </div>
       </div>
       </div>
+    </a>
     {% endfor %}
+</div>
   {% else %}
     <p>In service there is no cars</p>
   {% endif %}

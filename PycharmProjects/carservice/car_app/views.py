@@ -11,12 +11,15 @@ def index(request):
     cars_count = Car.objects.all().count()
     services = Service.objects.all()
     services_count = Service.objects.all().count()
+    number_of_visits = request.session.get('number_of_visits', 1)
+    request.session['number_of_visits'] = number_of_visits + 1
     context = {
         'cars': cars,
         'orders_count': orders_count,
         'car_count': cars_count,
         'services': services,
-        'services_count': services_count
+        'services_count': services_count,
+        'number_of_visits': number_of_visits
     }
     return render(request, 'index.html', context)
 
