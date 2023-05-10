@@ -4,7 +4,10 @@ from django.db import models
 from django.db import models
 from django.utils import timezone
 from django_resized import ResizedImageField
-from  PIL import *
+from PIL import *
+from django.contrib.auth.models import User
+from datetime import date
+from tinymce.models import HTMLField
 
 
 # Create your models here.
@@ -17,7 +20,6 @@ class CarModel(models.Model):
     year = models.DateField('Car year')
     engine = models.CharField('Car engine', max_length=20)
     car_photo = ResizedImageField('Car photo', size=[375, 500], upload_to='car_photo', null=True)
-
 
     class Meta:
         verbose_name = 'Car model'
@@ -34,10 +36,10 @@ class Car(models.Model):
     car_model = models.ForeignKey(CarModel, null=True, on_delete=models.SET_NULL)
     vin_code = models.CharField('VIN code', max_length=17)
     client = models.CharField('Client', max_length=100, help_text='Enter client:')
-
+    description = HTMLField('Description', help_text='Enter author description:', null=True)
 
     def __str__(self):
-        return f"{self.licence_plate} {self.car_model} {self.vin_code} {self.client}"
+        return f"{self.licence_plate} {self.car_model} {self.client}"
 
     class Meta:
         verbose_name = 'Car'
@@ -78,9 +80,25 @@ class OrderList(models.Model):
     """Order list which is connected to an order. Representing the visit to the car service
     and the total order placed """
     order_list_id = models.AutoField(primary_key=True)
-    order_date = models.DateTimeField('Date', default=timezone.now)
+    order_date = models.DateField('Order date', null=True, blank=True)
     car = models.ForeignKey(Car, null=True, on_delete=models.SET_NULL)
     total_price = models.FloatField('Total Amount')
+    due_back = models.DateField('Return date', null=True, blank=True)
+    client = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+
+    ORDER_STATUS = (
+        ('n', 'Not started'),
+        ('i', 'In progress'),
+        ('d', 'Done'),
+    )
+    order_status = models.CharField(max_length=1, default='n', blank=True, choices=ORDER_STATUS,
+                                    help_text='Order status')
+
+    @property
+    def is_overdue(self):
+        if date.today() > self.order_date:
+            return True
+        return False
 
     class Meta:
         verbose_name = 'Order List'

@@ -2,6 +2,7 @@ from django.core.paginator import Paginator
 from django.shortcuts import render, get_object_or_404
 from .models import Car, OrderList, Order, Service, CarModel
 from django.db.models import Q
+from django.contrib.auth.decorators import login_required
 
 
 # Create your views here.
@@ -57,7 +58,7 @@ def order(request, order_list_id):
     order_list = get_object_or_404(OrderList, pk=order_list_id)
     print(order_list)
     context = {
-        'order_list_orders':order_list_orders,
+        'order_list_orders': order_list_orders,
         'order_list': order_list
     }
     return render(request, 'order.html', context)
@@ -76,3 +77,17 @@ def search(request):
             vin_code__icontains=query))
     print(search_results)
     return render(request, 'search.html', {'cars': search_results, 'query': query})
+
+
+@login_required(login_url='login')
+def client_orders(request):
+    user = request.user
+    try:
+        user_orders = OrderList.objects.filter(client=request.user).order_by('due_back')
+    except OrderList.DoesNotExist:
+        user_orders = None
+    context = {
+        'user': user,
+        'user_orders': user_orders,
+    }
+    return render(request, 'user_orders.html', context)
