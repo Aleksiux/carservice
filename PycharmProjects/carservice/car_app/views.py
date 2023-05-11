@@ -1,8 +1,11 @@
 from django.core.paginator import Paginator
-from django.shortcuts import render, get_object_or_404
-from .models import Car, OrderList, Order, Service, CarModel
+from django.shortcuts import render, get_object_or_404, redirect, reverse
+from .models import Car, OrderList, Order, Service, CarModel, OrderComment
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import User
+from django.views.decorators.csrf import csrf_protect
+from django.contrib import messages
 
 
 # Create your views here.
@@ -48,7 +51,7 @@ def orders(request):
     page_number = request.GET.get('page')
     paged_orders = paginator.get_page(page_number)
     context = {
-        'orders': paged_orders
+        'orders': paged_orders,
     }
     return render(request, 'orders.html', context)
 
@@ -56,11 +59,16 @@ def orders(request):
 def order(request, order_list_id):
     order_list_orders = Order.objects.filter(order_list_id__exact=order_list_id)
     order_list = get_object_or_404(OrderList, pk=order_list_id)
-    print(order_list)
     context = {
         'order_list_orders': order_list_orders,
         'order_list': order_list
     }
+    if request.method == "POST":
+        comment_request = request.POST['comment']
+        comment = OrderComment(order_list_id=order_list_id, commenter= request.user, content=comment_request)
+        comment.save()
+        messages.info(request, f'Comment posted successfully')
+        return redirect('order', order_list.order_list_id)
     return render(request, 'order.html', context)
 
 
@@ -91,3 +99,38 @@ def client_orders(request):
         'user_orders': user_orders,
     }
     return render(request, 'user_orders.html', context)
+
+
+
+@csrf_protect
+def register(request):
+    if request.method == "POST":
+        # taking all values from registration form
+        username = request.POST['username']
+        first_name = request.POST['first_name']
+        last_name = request.POST['last_name']
+        email = request.POST['email']
+        password = request.POST['password']
+        password2 = request.POST['password2']
+
+        # checking if passwords matches
+        if password != password2:
+            messages.error(request, 'Password does not match!')
+            return redirect('register')
+
+        # checking if username is not taken
+        if User.objects.filter(username=username).exists():
+            messages.error(request, f'Username {username} is taken! Choose another one')
+            return redirect('register')
+
+        # checking if email is not taken
+        if User.objects.filter(email=email).exists():
+            messages.error(request, f'User with {email} is already registered!')
+            return redirect('register')
+
+        # if everything is good, create new user.
+        User.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email,
+                                 password=password)
+        messages.info(request, f'User with username {username} registered!')
+        return redirect('login')
+    return render(request, 'registration/register.html')

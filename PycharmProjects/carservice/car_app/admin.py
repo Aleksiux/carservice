@@ -12,7 +12,7 @@ class OrderInline(admin.TabularInline):
 
 
 class OrderListAdmin(admin.ModelAdmin):
-    list_display = ('car', 'order_date','total_price', 'client', 'due_back')
+    list_display = ('car', 'order_date', 'total_price', 'client', 'due_back')
     inlines = [OrderInline]
 
 
@@ -26,6 +26,11 @@ class ServicePriceAdmin(admin.ModelAdmin):
     list_display = ('service', 'price')
 
 
+class OrderListCommentAdmin(admin.ModelAdmin):
+    list_display = ('order_list', 'date_created', 'commenter', 'content')
+
+
+admin.site.register(OrderComment, OrderListCommentAdmin)
 admin.site.register(CarModel)
 admin.site.register(Car, CarAdmin)
 admin.site.register(Service)

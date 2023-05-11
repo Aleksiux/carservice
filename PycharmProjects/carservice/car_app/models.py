@@ -111,7 +111,7 @@ class OrderList(models.Model):
 class Order(models.Model):
     """Order which is connected to an order list. Representing one service/thing bought."""
     order_id = models.AutoField(primary_key=True)
-    order_list_id = models.ForeignKey(OrderList, on_delete=models.SET_NULL, null=True)
+    order_list_id = models.ForeignKey(OrderList, on_delete=models.SET_NULL, null=True, related_name='orders')
     service = models.ForeignKey(Service, null=True, on_delete=models.SET_NULL)
     quantity = models.IntegerField('Quantity')
     price = models.FloatField('Price')
@@ -122,3 +122,17 @@ class Order(models.Model):
 
     def __str__(self):
         return f"{self.quantity} - {self.price}"
+
+
+class OrderComment(models.Model):
+    order_comment_id = models.AutoField(primary_key=True)
+    order_list = models.ForeignKey(OrderList, on_delete=models.SET_NULL, null=True, blank=True,
+                                   related_name='order_list')
+    commenter = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    date_created = models.DateTimeField(auto_now_add=True)
+    content = models.TextField('Content', max_length=2000)
+
+    class Meta:
+        verbose_name = "Comment"
+        verbose_name_plural = 'Comment'
+        ordering = ['-date_created']
