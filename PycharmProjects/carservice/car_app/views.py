@@ -1,6 +1,7 @@
 from django.core.paginator import Paginator
 from django.shortcuts import render, get_object_or_404, redirect, reverse
 from .models import Car, OrderList, Order, Service, CarModel, OrderComment
+
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import User
@@ -63,9 +64,10 @@ def order(request, order_list_id):
         'order_list_orders': order_list_orders,
         'order_list': order_list
     }
+
     if request.method == "POST":
         comment_request = request.POST['comment']
-        comment = OrderComment(order_list_id=order_list_id, commenter= request.user, content=comment_request)
+        comment = OrderComment(order_list_id=order_list_id, commenter=request.user, content=comment_request)
         comment.save()
         messages.info(request, f'Comment posted successfully')
         return redirect('order', order_list.order_list_id)
@@ -99,7 +101,6 @@ def client_orders(request):
         'user_orders': user_orders,
     }
     return render(request, 'user_orders.html', context)
-
 
 
 @csrf_protect
