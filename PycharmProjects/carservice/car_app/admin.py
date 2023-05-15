@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import *
+from .models import Order, OrderComment, OrderList, CarModel, Car, Service, ServicePrice
 
 
 # Register your models here.
@@ -12,8 +12,11 @@ class OrderInline(admin.TabularInline):
 
 
 class OrderListAdmin(admin.ModelAdmin):
-    list_display = ('car', 'order_date', 'total_price', 'client', 'due_back')
+    list_display = ('car', 'order_date', 'total_orderlist_price', 'client', 'due_back')
     inlines = [OrderInline]
+
+    def total_orderlist_price(self, obj):
+        return obj.total_order_list_price
 
 
 class CarAdmin(admin.ModelAdmin):

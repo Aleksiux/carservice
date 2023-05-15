@@ -82,9 +82,17 @@ class OrderList(models.Model):
     order_list_id = models.AutoField(primary_key=True)
     order_date = models.DateField('Order date', null=True, blank=True)
     car = models.ForeignKey(Car, null=True, on_delete=models.SET_NULL)
-    total_price = models.FloatField('Total Amount')
+    # total_price = models.FloatField('Total Amount')
     due_back = models.DateField('Return date', null=True, blank=True)
     client = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+
+    @property
+    def total_order_list_price(self):
+        total_sum = 0
+        orders = self.orders.filter(order_list_id__exact=self.order_list_id)
+        for order in orders:
+            total_sum += order.total_price
+        return total_sum
 
     ORDER_STATUS = (
         ('n', 'Not started'),
@@ -105,7 +113,7 @@ class OrderList(models.Model):
         verbose_name_plural = 'Order Lists'
 
     def __str__(self):
-        return f"{self.car} - {self.order_date} - {self.total_price}"
+        return f"{self.car} - {self.order_date}"
 
 
 class Order(models.Model):
@@ -115,6 +123,10 @@ class Order(models.Model):
     service = models.ForeignKey(Service, null=True, on_delete=models.SET_NULL)
     quantity = models.IntegerField('Quantity')
     price = models.FloatField('Price')
+
+    @property
+    def total_price(self):
+        return self.price * self.quantity
 
     class Meta:
         verbose_name = 'Order'
