@@ -1,3 +1,4 @@
+from PIL import Image
 from django.db import models
 
 # Create your models here.
@@ -148,3 +149,19 @@ class OrderComment(models.Model):
         verbose_name = "Comment"
         verbose_name_plural = 'Comment'
         ordering = ['-date_created']
+
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
+    photo = models.ImageField(default="profile_pics/default.png", upload_to="profile_pics")
+
+    def __str__(self):
+        return f"{self.user.username} profile"
+
+    def save(self, *args, **kwargs):
+        """ Run the usual save function but also resize uploaded photo        """
+        super().save(*args, **kwargs)
+        img = Image.open(self.photo.path)
+        output_size = (150, 150)
+        img.thumbnail(output_size)
+        img.save(self.photo.path)
