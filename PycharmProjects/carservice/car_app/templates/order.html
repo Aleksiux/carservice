@@ -17,6 +17,8 @@
   {% if order_list.order_list.all %}
     {% for comment in order_list.order_list.all %}
       <hr>
+        <img class="rounded-circle account-img" width="5%" src="{{ user.profile.photo.url }}">
+
       <strong>{{ comment.commenter }}</strong>, <em>{{ comment.date_created}}</em>
       <p>{{ comment.content }}</p>
     {% endfor %}

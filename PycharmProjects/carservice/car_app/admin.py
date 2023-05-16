@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Order, OrderComment, OrderList, CarModel, Car, Service, ServicePrice
+from .models import Order, Profile, OrderComment, OrderList, CarModel, Car, Service, ServicePrice
 
 
 # Register your models here.
@@ -9,6 +9,13 @@ class OrderInline(admin.TabularInline):
     model = Order
     # Turn off extra empty lines for input
     extra = 0
+
+
+class OrderAdmin(admin.ModelAdmin):
+    list_display = ('total_price',)
+
+    def total_price(self, obj):
+        return obj.total_price
 
 
 class OrderListAdmin(admin.ModelAdmin):
@@ -32,11 +39,11 @@ class ServicePriceAdmin(admin.ModelAdmin):
 class OrderListCommentAdmin(admin.ModelAdmin):
     list_display = ('order_list', 'date_created', 'commenter', 'content')
 
-
+admin.site.register(Profile)
 admin.site.register(OrderComment, OrderListCommentAdmin)
 admin.site.register(CarModel)
 admin.site.register(Car, CarAdmin)
 admin.site.register(Service)
 admin.site.register(ServicePrice, ServicePriceAdmin)
 admin.site.register(OrderList, OrderListAdmin)
-admin.site.register(Order)
+admin.site.register(Order, OrderAdmin)
